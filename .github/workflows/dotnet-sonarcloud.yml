@@ -4,15 +4,17 @@ on:
   push:
     branches: 
       - 'master'
-      - 'src/*' 
-      - 'src/**'
+      - 'main'
   pull_request:
     types: [opened, synchronize, reopened]
     branches: 
       - 'master'
+      - 'main'
     paths:
       - 'src/*' 
       - 'src/**'
+      - 'test/*' 
+      - 'tests/**'
 
 permissions:
   pull-requests: read
