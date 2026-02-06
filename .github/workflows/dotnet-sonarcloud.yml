@@ -4,17 +4,15 @@ on:
   push:
     branches: 
       - 'master'
-      - 'main'
+      - 'src/*' 
+      - 'src/**'
   pull_request:
     types: [opened, synchronize, reopened]
     branches: 
       - 'master'
-      - 'main'
     paths:
       - 'src/*' 
       - 'src/**'
-      - 'test/*' 
-      - 'tests/**'
 
 permissions:
   pull-requests: read
@@ -32,6 +30,13 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 6.0.x
+
+      - name: Add NuGet source
+        run: dotnet nuget add source https://nuget.pkg.github.com/The-Chest/index.json 
+          --name github 
+          --username The-Chest 
+          --password "${{ secrets.NUGET_APIKEY }}" 
+          --store-password-in-clear-text
       
       - name: Restore dependencies
         run: dotnet restore 
@@ -69,7 +74,7 @@ jobs:
       - name: Begin Coverage Report
         run: 
           dotnet tool run dotnet-sonarscanner begin 
-          /k:"The-Chest_TheChest.Core" 
+          /k:"{ Project Key }" 
           /o:"the-chest" 
           /d:sonar.token="${{ secrets.SONAR_TOKEN }}" 
           /d:sonar.host.url="https://sonarcloud.io" 
@@ -77,9 +82,7 @@ jobs:
           /d:sonar.scanner.scanAll=false
       
       - name: Build Project
-        run: dotnet build 
-          --configuration Release 
-          --no-restore
+        run: dotnet build --configuration Release --no-restore
 
       - name: Run Coverage Report
         continue-on-error: true 
